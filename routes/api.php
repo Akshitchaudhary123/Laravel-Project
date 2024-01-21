@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserDetailsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test',[UserDetailsController::class,'test']);
+// public routes
+Route::get('/register',[UserController::class,'register']);
+// private routes
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
