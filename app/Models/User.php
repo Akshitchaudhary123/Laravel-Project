@@ -41,4 +41,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    //insert user details
+    public static function insertUserDetails($details){
+        $id=User::create($details);
+        return $id;
+    }
 }

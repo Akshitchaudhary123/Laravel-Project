@@ -9,6 +9,16 @@ class UserController extends Controller
 {
     public function register(Request $data){
         $data->validate(['name'=>'required','email'=>'required|email','password'=>'required|confirmed']);
-        UserService::RegisterUser($data);
+        return UserService::RegisterUser($data);
+    }
+    public function login(Request $data){
+        $data->validate(['email'=>'required|email','password'=>'required']);
+        return UserService::LoginUser($data);
+    }
+    public function logout(Request $data){
+        return UserService::LogOutUser();
+    }
+    public function userDetails(Request $data){
+        return UserService::UserDetails();
     }
 }
