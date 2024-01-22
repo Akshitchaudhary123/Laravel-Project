@@ -14,4 +14,9 @@ class PasswordResetController extends Controller
         $data->validate(['email' => 'required|email']);
         return UserService::passwordReset($data);
     }
+    public static function resetPassword(Request $data)
+    {
+        $data->validate(['password' => 'required|confirmed']);
+        return UserService::resetPassword($data);
+    }
 }

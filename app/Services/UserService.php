@@ -35,6 +35,7 @@ class UserService
         }
         return $return;
     }
+
     public static function LoginUser($data)
     {
         $return = [];
@@ -71,6 +72,7 @@ class UserService
         $return['status'] = 'success';
         return $return;
     }
+
     public static function passwordReset($data)
     {
         $return = [];
@@ -98,4 +100,22 @@ class UserService
         }
         return $return;
     }
+
+    public static function resetPassword($data){
+        $return=[];
+        $time=Carbon::now()->subMinutes(5)->toDateTimeString();
+        PasswordReset::where('created_at','<=',$time)->delete();
+        $passwordReset = PasswordReset::where('token',$data->token)->first();
+        if($passwordReset){
+            User::where('email',$passwordReset->email)->update(['password'=>Hash::make($data->password)]);
+            PasswordReset::where('token',$data->token)->delete();
+            $return['message']='Password Reset Successfully';
+            $return['status']='Success';
+        }else{
+            $return['message']='Token Invalid/Expired';
+            $return['status']='failed';
+        }
+        return $return;
+    }
+
 }

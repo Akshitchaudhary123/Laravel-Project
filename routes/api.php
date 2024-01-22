@@ -21,6 +21,7 @@ use App\Http\Controllers\PasswordResetController;
 Route::post('/register',[UserController::class,'register']);
 Route::post('/login',[UserController::class,'login']);
 Route::post('/password-reset',[PasswordResetController::class,'passwordReset']);
+Route::post('/reset/{token}',[PasswordResetController::class,'ResetPassword']);
 // private routes
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout',[UserController::class,'logout']);
