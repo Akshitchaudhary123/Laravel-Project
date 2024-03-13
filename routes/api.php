@@ -19,6 +19,7 @@ use App\Http\Controllers\PasswordResetController;
 
 // public routes
 Route::post('/register',[UserController::class,'register']);
+Route::get('/test',[UserController::class,'test']);
 Route::post('/login',[UserController::class,'login']);
 Route::post('/password-reset',[PasswordResetController::class,'passwordReset']);
 Route::post('/reset/{token}',[PasswordResetController::class,'ResetPassword']);

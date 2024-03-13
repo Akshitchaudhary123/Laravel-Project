@@ -65,11 +65,23 @@ class UserService
 
     public static function UserDetails()
     {
-        $return = [];
-        $user_details = Auth::user();
-        $return['User Details'] = $user_details;
-        $return['message'] = 'Successfully Fetched';
-        $return['status'] = 'success';
+        // $return = [
+        //       "userId"=> 1,
+        //       "id"=> 1,
+        //       "title"=> "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+        //       "body"=> "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+        //   ];
+        $return=[];
+          $data = User::get();
+        //   pp($data);
+          foreach ($data as $key => $value) {
+            $return[] = $value;
+            # code...
+          }
+        // $user_details = Auth::user();
+        // $return['User Details'] = $user_details;
+        // $return['message'] = 'Successfully Fetched';
+        // $return['status'] = 'success';
         return $return;
     }
 

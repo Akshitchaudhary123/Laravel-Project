@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\UserService;
+use GrahamCampbell\ResultType\Success;
 
 class UserController extends Controller
 {
@@ -20,5 +21,8 @@ class UserController extends Controller
     }
     public function userDetails(Request $data){
         return UserService::UserDetails();
+    }
+    public function test(Request $data){
+        return UserService::UserDetails();;
     }
 }
