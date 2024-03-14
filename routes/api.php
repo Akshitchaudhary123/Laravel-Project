@@ -16,7 +16,7 @@ use App\Http\Controllers\PasswordResetController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+        // "php": "^7.3|^8.0|^8.1|^8.2",
 // public routes
 Route::post('/register',[UserController::class,'register']);
 Route::get('/test',[UserController::class,'test']);
