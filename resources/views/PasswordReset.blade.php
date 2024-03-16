@@ -48,7 +48,7 @@
     
     <a href="{{$token}}" class="btn">Reset Password</a>
 
-    <p>or use OTP : {{otp}}</p>
+    <p>or use OTP : {{$otp}}</p>
 
     <p>If you didn't request a password reset, you can ignore this email.</p>
     <p>Thanks,<br>Your App Team</p>
