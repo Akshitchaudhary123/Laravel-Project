@@ -45,8 +45,10 @@
     <h1>Password Reset</h1>
     <p>Hello {{$username}},</p>
     <p>We received a request to reset your password. Click the button below to reset it:</p>
-
+    
     <a href="{{$token}}" class="btn">Reset Password</a>
+
+    <p>or use OTP : {{otp}}</p>
 
     <p>If you didn't request a password reset, you can ignore this email.</p>
     <p>Thanks,<br>Your App Team</p>

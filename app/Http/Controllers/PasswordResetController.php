@@ -19,4 +19,9 @@ class PasswordResetController extends Controller
         $data->validate(['password' => 'required|confirmed']);
         return UserService::resetPassword($data);
     }
+    public static function getOtp(Request $data)
+    {
+        $data->validate(['email' => 'required|email']);
+        return UserService::getOtpByEmail($data);
+    }
 }

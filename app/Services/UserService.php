@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Otp;
 use App\Models\PasswordReset;
 use App\Models\User;
 use Carbon\Carbon;
@@ -88,6 +89,7 @@ class UserService
     public static function passwordReset($data)
     {
         $return = [];
+        $otp = rand(1000, 9999);
         //checking if email exist
         $user = User::select('name')->where('email', $data->email)->first();
         if ($user) {
@@ -98,13 +100,24 @@ class UserService
                 'created_at' => Carbon::now(),
             ];
             PasswordReset::insert($updated_data);
+            $updated_data = [
+                'email' => isset($data->email)?$data->email:null,
+                'phone_no' => isset($data->phone_no)?$data->phone_no:null,
+                'otp' => $otp,
+                'token' => $token,
+                'created_at' => Carbon::now(),
+            ];
+            Otp::insert($updated_data);
             // dump("http://127.0.0.1:3000/api/user/reset/".$token);
             $message = [
                 'token' => $token,
+                'otp' => $otp,
                 'username'=> $user->name,
             ];
             sendMail('PasswordReset', 'Reset Password', $data->email, $message);
             $return['message'] = 'Password Reset Request Successfully Sent';
+            $return['token'] = $token;
+            $return['otp'] = $otp;
             $return['status'] = 'success';
         } else {
             $return['message'] = 'User Not Exist';
@@ -121,6 +134,7 @@ class UserService
         if($passwordReset){
             User::where('email',$passwordReset->email)->update(['password'=>Hash::make($data->password)]);
             PasswordReset::where('token',$data->token)->delete();
+            Otp::where('token',$data->token)->delete();
             $return['message']='Password Reset Successfully';
             $return['status']='Success';
         }else{
@@ -129,5 +143,18 @@ class UserService
         }
         return $return;
     }
+
+    public static function getOtpByEmail($data){
+        $return=[];
+        $otp = Otp::select('otp')->where('email', $data->email)->desc('id')->first();
+        if($otp){
+            $return['otp']=$otp;
+            $return['status']='Success';
+        }else{
+            $return['status']='failed';
+        }
+        return $return;
+    }
+
 
 }
