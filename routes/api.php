@@ -22,7 +22,7 @@ Route::post('/register',[UserController::class,'register']);
 Route::get('/test',[UserController::class,'test']);
 Route::post('/login',[UserController::class,'login']);
 Route::post('/password-reset',[PasswordResetController::class,'passwordReset']);
-Route::post('/reset/{token}',[PasswordResetController::class,'ResetPassword']);
+Route::post('/reset-password/{token}',[PasswordResetController::class,'ResetPassword']);
 Route::post('/reset/by-otp',[PasswordResetController::class,'resetPasswordByOtp']);
 Route::post('/otp',[PasswordResetController::class,'getOtp']);
 // private routes
