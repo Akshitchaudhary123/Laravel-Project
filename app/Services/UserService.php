@@ -146,7 +146,7 @@ class UserService
 
     public static function getOtpByEmail($data){
         $return=[];
-        $otp = Otp::select('otp')->where('email', $data->email)->desc('id')->first();
+        $otp = Otp::select('otp')->where('email', $data->email)->orderBy('id','desc')->first();
         if($otp){
             $return['otp']=$otp;
             $return['status']='Success';
@@ -156,5 +156,22 @@ class UserService
         return $return;
     }
 
+    public static function resetPasswordByOtp($data){
+        $return=[];
+        $time=Carbon::now()->subMinutes(5)->toDateTimeString();
+        PasswordReset::where('created_at','<=',$time)->delete();
+        $passwordReset = Otp::select('otp')->where('email',$data->email)->orderBy('id','desc')->first();
+        if(isset($passwordReset->otp) && $passwordReset->otp==$data->otp){
+            User::where('email',$passwordReset->email)->update(['password'=>Hash::make($data->password)]);
+            PasswordReset::where('token',$data->token)->delete();
+            Otp::where('token',$data->token)->delete();
+            $return['message']='Password Reset Successfully';
+            $return['status']='Success';
+        }else{
+            $return['message']='Token Invalid/Expired';
+            $return['status']='failed';
+        }
+        return $return;
+    }
 
 }
