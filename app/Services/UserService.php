@@ -161,7 +161,7 @@ class UserService
         $time=Carbon::now()->subMinutes(5)->toDateTimeString();
         PasswordReset::where('created_at','<=',$time)->delete();
         $passwordReset = Otp::select('otp')->where('email',$data->email)->orderBy('id','desc')->first();
-        if(isset($passwordReset->otp) && $passwordReset->otp==$data->otp){
+        if(isset($passwordReset) && $passwordReset->otp==$data->otp){
             User::where('email',$passwordReset->email)->update(['password'=>Hash::make($data->password)]);
             PasswordReset::where('token',$data->token)->delete();
             Otp::where('token',$data->token)->delete();
