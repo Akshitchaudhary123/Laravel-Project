@@ -174,4 +174,35 @@ class UserService
         return $return;
     }
 
+    public static function OpenAI($data){
+        $request=[
+            "model" => "gpt-3.5-turbo", 
+            "messages" => [
+                  [
+                     "role" => "system", 
+                     "content" => $data['content']
+                  ]
+                  ]
+            ];
+        $req=json_encode($request);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . getenv('OPENAI_API_KEY') ?? '',
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
+        
+        $response = curl_exec($ch);
+        
+        curl_close($ch);
+        $result=json_decode($response);
+        $content=$result->choices[0]->message->content;
+        $return=[];
+        $return['content']=$content;
+        return $return;
+    }
+
 }

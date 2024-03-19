@@ -25,4 +25,9 @@ class UserController extends Controller
     public function test(Request $data){
         return UserService::UserDetails();;
     }
+    public static function OpenAI(Request $data)
+    {
+        $data->validate(['content' => 'required|string']);
+        return UserService::OpenAI($data);
+    }
 }
