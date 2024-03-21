@@ -64,7 +64,7 @@ class UserService
         return $return;
     }
 
-    public static function UserDetails()
+    public static function AllData()
     {
         // $return = [
         //       "userId"=> 1,
@@ -202,6 +202,32 @@ class UserService
         $content=$result->choices[0]->message->content;
         $return=[];
         $return['content']=$content;
+        return $return;
+    }
+
+    public static function uploadImg($data){
+        // pp($data->file);
+        // pp($_FILES);
+        if(isset($_FILES) && !empty($_FILES['file']['name'])){
+            $data->file->move("/Applications/XAMPP/xamppfiles/htdocs/Projects/laravel_project/storage/app/public",$_FILES['file']['name']);
+            // echo $data->file('image')->store('image');
+            // $fileName = time()."photo.".$data->file('image')->getClientOriginalExtension();
+            // echo $data->file('image')->storeAs('public/uploads',$fileName);
+        }
+    }
+
+    public static function UserDetails($data)
+    {
+        $return=[];
+          $data = User::where('email',$data->email)->get();
+        //   foreach ($data as $key => $value) {
+        //     $return[] = $value;
+            # code...
+        //   }
+        // $user_details = Auth::user();
+        $return['User Details'] = $data;
+        $return['message'] = 'Successfully Fetched';
+        $return['status'] = 'success';
         return $return;
     }
 

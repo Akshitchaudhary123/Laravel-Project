@@ -19,15 +19,17 @@ use App\Http\Controllers\PasswordResetController;
         // "php": "^7.3|^8.0|^8.1|^8.2",
 // public routes
 Route::post('/register',[UserController::class,'register']);
-Route::get('/test',[UserController::class,'test']);
+Route::get('/all',[UserController::class,'AllData']);
 Route::post('/login',[UserController::class,'login']);
 Route::post('/password-reset',[PasswordResetController::class,'passwordReset']);
 Route::post('/reset-password/{token}',[PasswordResetController::class,'ResetPassword']);
 Route::post('/reset/by-otp',[PasswordResetController::class,'resetPasswordByOtp']);
 Route::post('/otp',[PasswordResetController::class,'getOtp']);
 Route::post('/open-ai',[UserController::class,'OpenAI']);
+Route::post('/upload-img',[UserController::class,'UploadImg']);
+Route::post('/details',[UserController::class,'UserDetails']);
 // private routes
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout',[UserController::class,'logout']);
-    Route::post('/details',[UserController::class,'UserDetails']);
+    // Route::post('/details',[UserController::class,'UserDetails']);
 });

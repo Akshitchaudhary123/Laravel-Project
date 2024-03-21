@@ -19,15 +19,20 @@ class UserController extends Controller
     public function logout(Request $data){
         return UserService::LogOutUser();
     }
-    public function userDetails(Request $data){
-        return UserService::UserDetails();
+    public function AllData(Request $data){
+        return UserService::AllData();
     }
-    public function test(Request $data){
-        return UserService::UserDetails();;
+    public function UserDetails(Request $data){
+        return UserService::UserDetails($data);
     }
     public static function OpenAI(Request $data)
     {
         $data->validate(['content' => 'required|string']);
         return UserService::OpenAI($data);
+    }
+    public static function UploadImg(Request $data)
+    {
+        // $data->validate(['content' => 'required|string']);
+        return UserService::uploadImg($data);
     }
 }
