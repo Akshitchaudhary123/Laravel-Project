@@ -32,7 +32,17 @@ class UserController extends Controller
     }
     public static function UploadImg(Request $data)
     {
-        // $data->validate(['content' => 'required|string']);
+        $data->validate(['email' => 'required|string']);
         return UserService::uploadImg($data);
+    }
+    public static function getImg(Request $data)
+    {
+        $data->validate(['email' => 'required|string']);
+        return UserService::getImg($data);
+    }
+    public static function removeImg(Request $data)
+    {
+        $data->validate(['email' => 'required|string']);
+        return UserService::removeImg($data);
     }
 }
