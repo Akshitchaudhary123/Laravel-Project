@@ -5,7 +5,10 @@ namespace App\Services;
 use App\Models\Otp;
 use App\Models\PasswordReset;
 use App\Models\User;
+use App\Models\File;
 use Carbon\Carbon;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -72,13 +75,13 @@ class UserService
         //       "title"=> "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
         //       "body"=> "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
         //   ];
-        $return=[];
-          $data = User::get();
+        $return = [];
+        $data = User::get();
         //   pp($data);
-          foreach ($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $return[] = $value;
             # code...
-          }
+        }
         // $user_details = Auth::user();
         // $return['User Details'] = $user_details;
         // $return['message'] = 'Successfully Fetched';
@@ -101,8 +104,8 @@ class UserService
             ];
             PasswordReset::insert($updated_data);
             $updated_data = [
-                'email' => isset($data->email)?$data->email:null,
-                'phone_no' => isset($data->phone_no)?$data->phone_no:null,
+                'email' => isset($data->email) ? $data->email : null,
+                'phone_no' => isset($data->phone_no) ? $data->phone_no : null,
                 'otp' => $otp,
                 'token' => $token,
                 'created_at' => Carbon::now(),
@@ -112,7 +115,7 @@ class UserService
             $message = [
                 'token' => $token,
                 'otp' => $otp,
-                'username'=> $user->name,
+                'username' => $user->name,
             ];
             sendMail('PasswordReset', 'Reset Password', $data->email, $message);
             $return['message'] = 'Password Reset Request Successfully Sent';
@@ -126,65 +129,69 @@ class UserService
         return $return;
     }
 
-    public static function resetPassword($data){
-        $return=[];
-        $time=Carbon::now()->subMinutes(5)->toDateTimeString();
-        PasswordReset::where('created_at','<=',$time)->delete();
-        $passwordReset = PasswordReset::where('token',$data->token)->first();
-        if($passwordReset){
-            User::where('email',$passwordReset->email)->update(['password'=>Hash::make($data->password)]);
-            PasswordReset::where('token',$data->token)->delete();
-            Otp::where('token',$data->token)->delete();
-            $return['message']='Password Reset Successfully';
-            $return['status']='Success';
-        }else{
-            $return['message']='Token Invalid/Expired';
-            $return['status']='failed';
+    public static function resetPassword($data)
+    {
+        $return = [];
+        $time = Carbon::now()->subMinutes(5)->toDateTimeString();
+        PasswordReset::where('created_at', '<=', $time)->delete();
+        $passwordReset = PasswordReset::where('token', $data->token)->first();
+        if ($passwordReset) {
+            User::where('email', $passwordReset->email)->update(['password' => Hash::make($data->password)]);
+            PasswordReset::where('token', $data->token)->delete();
+            Otp::where('token', $data->token)->delete();
+            $return['message'] = 'Password Reset Successfully';
+            $return['status'] = 'Success';
+        } else {
+            $return['message'] = 'Token Invalid/Expired';
+            $return['status'] = 'failed';
         }
         return $return;
     }
 
-    public static function getOtpByEmail($data){
-        $return=[];
-        $otp = Otp::select('otp')->where('email', $data->email)->orderBy('id','desc')->first();
-        if($otp){
-            $return['otp']=$otp;
-            $return['status']='Success';
-        }else{
-            $return['status']='failed';
+    public static function getOtpByEmail($data)
+    {
+        $return = [];
+        $otp = Otp::select('otp')->where('email', $data->email)->orderBy('id', 'desc')->first();
+        if ($otp) {
+            $return['otp'] = $otp;
+            $return['status'] = 'Success';
+        } else {
+            $return['status'] = 'failed';
         }
         return $return;
     }
 
-    public static function resetPasswordByOtp($data){
-        $return=[];
-        $time=Carbon::now()->subMinutes(5)->toDateTimeString();
-        PasswordReset::where('created_at','<=',$time)->delete();
-        $passwordReset = Otp::where('email',$data->email)->orderBy('id','desc')->first();
-        if(isset($passwordReset) && $passwordReset->otp==$data->otp){
-            User::where('email',$passwordReset->email)->update(['password'=>Hash::make($data->password)]);
-            PasswordReset::where('token',$data->token)->delete();
-            Otp::where('token',$data->token)->delete();
-            $return['message']='Password Reset Successfully';
-            $return['status']='Success';
-        }else{
-            $return['message']='Token Invalid/Expired';
-            $return['status']='failed';
+    public static function resetPasswordByOtp($data)
+    {
+        $return = [];
+        $time = Carbon::now()->subMinutes(5)->toDateTimeString();
+        PasswordReset::where('created_at', '<=', $time)->delete();
+        $passwordReset = Otp::where('email', $data->email)->orderBy('id', 'desc')->first();
+        if (isset($passwordReset) && $passwordReset->otp == $data->otp) {
+            User::where('email', $passwordReset->email)->update(['password' => Hash::make($data->password)]);
+            PasswordReset::where('token', $data->token)->delete();
+            Otp::where('token', $data->token)->delete();
+            $return['message'] = 'Password Reset Successfully';
+            $return['status'] = 'Success';
+        } else {
+            $return['message'] = 'Token Invalid/Expired';
+            $return['status'] = 'failed';
         }
         return $return;
     }
 
-    public static function OpenAI($data){
-        $request=[
-            "model" => "gpt-3.5-turbo", 
+    public static function OpenAI($data)
+    {
+        $request = [
+            "model" => "gpt-3.5-turbo",
             "messages" => [
-                  [
-                     "role" => "system", 
-                     "content" => $data['content']
-                  ]
-                  ]
-            ];
-        $req=json_encode($request);
+                [
+                    "role" => "system",
+                    "content" => $data['content']
+                ]
+            ]
+        ];
+        $req = json_encode($request);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -194,40 +201,71 @@ class UserService
             'Authorization: Bearer ' . getenv('OPENAI_API_KEY') ?? '',
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
-        
+
         $response = curl_exec($ch);
-        
+
         curl_close($ch);
-        $result=json_decode($response);
-        $content=$result->choices[0]->message->content;
-        $return=[];
-        $return['content']=$content;
+        $result = json_decode($response);
+        $content = $result->choices[0]->message->content;
+        $return = [];
+        $return['content'] = $content;
         return $return;
     }
 
-    public static function uploadImg($data){
-        // pp($data->file);
-        // pp($_FILES);
-        if(isset($_FILES) && !empty($_FILES['file']['name'])){
-            $data->file->move("/Applications/XAMPP/xamppfiles/htdocs/Projects/laravel_project/storage/app/public",$_FILES['file']['name']);
-            // echo $data->file('image')->store('image');
-            // $fileName = time()."photo.".$data->file('image')->getClientOriginalExtension();
-            // echo $data->file('image')->storeAs('public/uploads',$fileName);
+    public static function uploadImg($request)
+    {
+        $return=[];
+        if (User::where('email', $request->email)->first()) {
+            // $uploadedFileUrl = Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
+            $result = $request->file->storeOnCloudinary('ProfileImage');
+            $uploadedFileUrl = $result->getPath();
+            $details=[
+                'email' => isset($request->email)?$request->email:null,
+                'phone_no' => isset($request->phone_no)?$request->phone_no:null,
+                'url' => $uploadedFileUrl,
+            ];
+            File::savePath($details);
+            $return['url']=$uploadedFileUrl;
+        }else{
+            throw new Exception("Invalid User");   
         }
+        return $return;
     }
 
     public static function UserDetails($data)
     {
-        $return=[];
-          $data = User::where('email',$data->email)->get();
+        $return = [];
+        $data = User::where('email', $data->email)->get();
         //   foreach ($data as $key => $value) {
         //     $return[] = $value;
-            # code...
+        # code...
         //   }
         // $user_details = Auth::user();
         $return['User Details'] = $data;
         $return['message'] = 'Successfully Fetched';
         $return['status'] = 'success';
+        return $return;
+    }
+
+    public static function getImg($request)
+    {
+        $return=[];
+        $details = File::getPath($request->email);
+        if (!empty($details['url'])) {
+            $return['url'] = $details['url'];
+            $return['message'] = 'Image Found';
+        }else{
+            $return['url'] = null;
+            $return['message'] = 'No Image Found';
+        }
+        return $return;
+    }
+
+    public static function removeImg($request)
+    {
+        $return=[];
+        File::softDeletePath($request->email);
+        $return['message'] = 'success';
         return $return;
     }
 

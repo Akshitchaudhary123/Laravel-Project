@@ -27,6 +27,8 @@ Route::post('/reset/by-otp',[PasswordResetController::class,'resetPasswordByOtp'
 Route::post('/otp',[PasswordResetController::class,'getOtp']);
 Route::post('/open-ai',[UserController::class,'OpenAI']);
 Route::post('/upload-img',[UserController::class,'UploadImg']);
+Route::post('/get-img',[UserController::class,'getImg']);
+Route::post('/remove-img',[UserController::class,'removeImg']);
 Route::post('/details',[UserController::class,'UserDetails']);
 // private routes
 Route::middleware('auth:sanctum')->group(function(){
