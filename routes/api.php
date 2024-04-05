@@ -30,6 +30,7 @@ Route::post('/upload-img',[UserController::class,'UploadImg']);
 Route::post('/get-img',[UserController::class,'getImg']);
 Route::post('/remove-img',[UserController::class,'removeImg']);
 Route::post('/details',[UserController::class,'UserDetails']);
+Route::post('/all-data',[UserController::class,'AllData']);
 // private routes
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout',[UserController::class,'logout']);

@@ -6,6 +6,7 @@ use App\Models\Otp;
 use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\File;
+use App\Models\PersonalAccessToken as ModelsPersonalAccessToken;
 use Carbon\Carbon;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Exception;
@@ -36,6 +37,7 @@ class UserService
             $return['message'] = 'Successfully Registered';
             $return['token'] = $token;
             $return['status'] = 'Success';
+            sendMail('SuccessfullyRegistered', 'Registration Successful', $data->email);
         }
         return $return;
     }
@@ -110,6 +112,7 @@ class UserService
                 'token' => $token,
                 'created_at' => Carbon::now(),
             ];
+            Otp::where('email', $data->email)->delete();
             Otp::insert($updated_data);
             // dump("http://127.0.0.1:3000/api/user/reset/".$token);
             $message = [
@@ -219,10 +222,12 @@ class UserService
             // $uploadedFileUrl = Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
             $result = $request->file->storeOnCloudinary('ProfileImage');
             $uploadedFileUrl = $result->getPath();
+            $uploadedFilePublicId = $result->getPublicId();
             $details=[
                 'email' => isset($request->email)?$request->email:null,
                 'phone_no' => isset($request->phone_no)?$request->phone_no:null,
                 'url' => $uploadedFileUrl,
+                'public_id' => $uploadedFilePublicId,
             ];
             File::savePath($details);
             $return['url']=$uploadedFileUrl;
@@ -232,14 +237,21 @@ class UserService
         return $return;
     }
 
-    public static function UserDetails($data)
+    public static function UserDetails($request)
     {
         $return = [];
-        $data = User::where('email', $data->email)->get();
-        //   foreach ($data as $key => $value) {
-        //     $return[] = $value;
-        # code...
-        //   }
+        $details = [];
+        if(!empty($request->token)){
+            $details = ModelsPersonalAccessToken::select('name')->where('token', $request->token)->first();
+        };
+        $request->email = (isset($details['name']))?$details['name']:$request->email;
+        $data = User::where('email', $request->email)->get();
+        $url = File::getPath($request->email);
+        if (!empty($url['url'])) {
+            $return['url'] = $url['url'];
+        }else{
+            $return['url'] = $url['url'];
+        }
         // $user_details = Auth::user();
         $return['User Details'] = $data;
         $return['message'] = 'Successfully Fetched';
@@ -264,7 +276,9 @@ class UserService
     public static function removeImg($request)
     {
         $return=[];
+        $details = File::getPath($request->email);
         File::softDeletePath($request->email);
+        Cloudinary::uploadApi()->destroy($details['public_id']);
         $return['message'] = 'success';
         return $return;
     }

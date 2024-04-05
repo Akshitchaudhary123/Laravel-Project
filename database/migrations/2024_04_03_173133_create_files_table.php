@@ -18,6 +18,7 @@ class CreateFilesTable extends Migration
             $table->string('email')->nullable();
             $table->String('phone_no')->nullable();
             $table->string('url');
+            $table->string('public_id');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });

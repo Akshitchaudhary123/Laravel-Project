@@ -12,7 +12,7 @@ function pp($arr, $die = "true")
         die();
     }
 }
-function sendMail($view, $subject, $email, $data)
+function sendMail($view, $subject, $email, $data=[])
 {
     Mail::send($view, $data, function (Message $msg) use ($email, $subject) {
         $msg->subject($subject);
