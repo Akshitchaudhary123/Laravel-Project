@@ -250,7 +250,7 @@ class UserService
         if (!empty($url['url'])) {
             $return['url'] = $url['url'];
         }else{
-            $return['url'] = $url['url'];
+            $return['url'] = null;
         }
         // $user_details = Auth::user();
         $return['User Details'] = $data;
