@@ -49,9 +49,11 @@ class UserService
         $user = User::where('email', $data->email)->first();
         //checking is password match
         if ($user && Hash::check($data->password, $user->password)) {
-            $token = $user->createToken($data->email)->plainTextToken;
+            $token = $user->createToken($data->email);
+            $details = ModelsPersonalAccessToken::select('token')->where('name', $data->email)->first();
+            // pp($details['token']);
             $return['message'] = 'Successfully Login';
-            $return['token'] = $token;
+            $return['token'] = $details['token'];
             $return['status'] = 'Success';
         } else {
             $return['message'] = 'Invalid User or Password';
