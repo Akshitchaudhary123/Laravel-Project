@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use Illuminate\Http\Request;
 use App\Services\UserService;
+use Exception;
 use GrahamCampbell\ResultType\Success;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -44,5 +47,18 @@ class UserController extends Controller
     {
         $data->validate(['email' => 'required|string']);
         return UserService::removeImg($data);
+    }
+    public static function downloadImg(Request $data)
+    {
+        $data->validate(['email' => 'required|string']);
+        $details = File::getPath($data->email);
+        $url = $details['url'];
+        if(!isset($url)){throw new Exception("No Image Found");
+        }
+        $contents = file_get_contents($url);
+        // $filename = "ProfilePhoto";
+        $filename = basename($url);
+        Storage::put('public/' . $filename, $contents);
+        return response()->download(storage_path('app/public/' . $filename));
     }
 }

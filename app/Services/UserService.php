@@ -284,5 +284,14 @@ class UserService
         $return['message'] = 'success';
         return $return;
     }
+    // public static function downloadImg($request)
+    // {
+    //     $return=[];
+    //     $details = File::getPath('dahiyaarjun343@gmail.com');
+    //     // File::softDeletePath($request->email);
+    //     $details['url'];
+    //     $return['message'] = 'success';
+    //     return $return;
+    // }
 
 }

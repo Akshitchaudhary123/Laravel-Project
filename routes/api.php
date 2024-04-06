@@ -29,6 +29,7 @@ Route::post('/open-ai',[UserController::class,'OpenAI']);
 Route::post('/upload-img',[UserController::class,'UploadImg']);
 Route::post('/get-img',[UserController::class,'getImg']);
 Route::post('/remove-img',[UserController::class,'removeImg']);
+Route::post('/download-img',[UserController::class,'downloadImg']);
 Route::post('/details',[UserController::class,'UserDetails']);
 Route::post('/all-data',[UserController::class,'AllData']);
 // private routes
