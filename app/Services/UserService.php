@@ -13,8 +13,6 @@ use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Mail\Message;
-use Illuminate\Support\Facades\Mail;
 
 class UserService
 {
@@ -51,7 +49,6 @@ class UserService
         if ($user && Hash::check($data->password, $user->password)) {
             $token = $user->createToken($data->email);
             $details = ModelsPersonalAccessToken::select('token')->where('name', $data->email)->first();
-            // pp($details['token']);
             $return['message'] = 'Successfully Login';
             $return['token'] = $details['token'];
             $return['status'] = 'Success';
@@ -73,23 +70,12 @@ class UserService
 
     public static function AllData()
     {
-        // $return = [
-        //       "userId"=> 1,
-        //       "id"=> 1,
-        //       "title"=> "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-        //       "body"=> "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-        //   ];
         $return = [];
         $data = User::get();
-        //   pp($data);
         foreach ($data as $key => $value) {
             $return[] = $value;
             # code...
         }
-        // $user_details = Auth::user();
-        // $return['User Details'] = $user_details;
-        // $return['message'] = 'Successfully Fetched';
-        // $return['status'] = 'success';
         return $return;
     }
 
@@ -206,9 +192,7 @@ class UserService
             'Authorization: Bearer ' . getenv('OPENAI_API_KEY') ?? '',
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
-
         $response = curl_exec($ch);
-
         curl_close($ch);
         $result = json_decode($response);
         $content = $result->choices[0]->message->content;
@@ -232,6 +216,7 @@ class UserService
                 'public_id' => $uploadedFilePublicId,
             ];
             File::savePath($details);
+            User::updateUserDetails($request->email,['name'=>isset($request->name)?$request->name:null]);
             $return['url']=$uploadedFileUrl;
         }else{
             throw new Exception("Invalid User");   
@@ -284,14 +269,5 @@ class UserService
         $return['message'] = 'success';
         return $return;
     }
-    // public static function downloadImg($request)
-    // {
-    //     $return=[];
-    //     $details = File::getPath('dahiyaarjun343@gmail.com');
-    //     // File::softDeletePath($request->email);
-    //     $details['url'];
-    //     $return['message'] = 'success';
-    //     return $return;
-    // }
 
 }

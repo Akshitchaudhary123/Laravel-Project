@@ -30,6 +30,7 @@ Route::post('/upload-img',[UserController::class,'UploadImg']);
 Route::post('/get-img',[UserController::class,'getImg']);
 Route::post('/remove-img',[UserController::class,'removeImg']);
 Route::post('/download-img',[UserController::class,'downloadImg']);
+Route::post('/download-pdf',[UserController::class,'downloadPdf']);
 Route::post('/details',[UserController::class,'UserDetails']);
 Route::post('/all-data',[UserController::class,'AllData']);
 // private routes

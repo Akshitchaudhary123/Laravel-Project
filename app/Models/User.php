@@ -46,4 +46,8 @@ class User extends Authenticatable
         $id=User::create($details);
         return $id;
     }
+    public static function updateUserDetails($email,$details){
+        $id=User::where('email',$email)->update($details);
+        return $id;
+    }
 }
