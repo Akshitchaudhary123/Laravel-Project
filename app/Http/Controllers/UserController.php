@@ -6,6 +6,7 @@ use App\Models\File;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use Exception;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -71,5 +72,15 @@ class UserController extends Controller
         $filename = basename($url);
         Storage::put('public/' . $filename, $contents);
         return response()->download(storage_path('app/public/' . $filename),$filename);
+    }
+    public static function getSubjects(Request $data)
+    {
+        $data->validate(['class' => 'required|string']);
+        return UserService::getSubjects($data);
+    }
+    public static function updateName(Request $data)
+    {
+        $data->validate(['email' => 'required|string','name' => 'required|string']);
+        return response(UserService::updateName($data));
     }
 }

@@ -7,6 +7,7 @@ use App\Models\PasswordReset;
 use App\Models\User;
 use App\Models\File;
 use App\Models\PersonalAccessToken as ModelsPersonalAccessToken;
+use App\Models\Subject;
 use Carbon\Carbon;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Exception;
@@ -267,6 +268,29 @@ class UserService
         File::softDeletePath($request->email);
         Cloudinary::uploadApi()->destroy($details['public_id']);
         $return['message'] = 'success';
+        return $return;
+    }
+
+    public static function getSubjects($request)
+    {
+        $return=[];
+        $details = Subject::getSubjects($request->class,isset($request->branch)?$request->branch:null);
+        foreach ($details as $key => $value) {
+            $return[] = $value;
+        }
+        return $return;
+    }
+
+    public static function updateName($request)
+    {
+        $return=[];
+        $return['message']='fail';
+        if (User::where('email', $request->email)->first()) {
+            User::updateUserDetails($request->email,['name'=>isset($request->name)?$request->name:null]);
+            $return['message']='success';
+        }else{
+            throw new Exception("Invalid User");   
+        }
         return $return;
     }
 

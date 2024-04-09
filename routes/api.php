@@ -33,6 +33,8 @@ Route::post('/download-img',[UserController::class,'downloadImg']);
 Route::post('/download-pdf',[UserController::class,'downloadPdf']);
 Route::post('/details',[UserController::class,'UserDetails']);
 Route::post('/all-data',[UserController::class,'AllData']);
+Route::post('/get-subjects',[UserController::class,'getSubjects']);
+Route::post('/update-name',[UserController::class,'updateName']);
 // private routes
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout',[UserController::class,'logout']);
