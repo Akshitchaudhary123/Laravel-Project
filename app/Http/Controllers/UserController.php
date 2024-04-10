@@ -83,4 +83,9 @@ class UserController extends Controller
         $data->validate(['email' => 'required|string','name' => 'required|string']);
         return response(UserService::updateName($data));
     }
+    public static function getChapters(Request $data)
+    {
+        $data->validate(['class' => 'required|string','subject' => 'required|string']);
+        return UserService::getChapters($data);
+    }
 }

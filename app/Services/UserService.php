@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Book;
 use App\Models\Otp;
 use App\Models\PasswordReset;
 use App\Models\User;
@@ -290,6 +291,16 @@ class UserService
             $return['message']='success';
         }else{
             throw new Exception("Invalid User");   
+        }
+        return $return;
+    }
+
+    public static function getChapters($request)
+    {
+        $return=[];
+        $details = Book::getChapters($request->class,$request->subject,isset($request->branch)?$request->branch:null);
+        foreach ($details as $key => $value) {
+            $return[] = $value;
         }
         return $return;
     }
