@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\File;
 use Illuminate\Http\Request;
 use App\Services\UserService;
@@ -63,10 +64,10 @@ class UserController extends Controller
     }
     public static function downloadPdf(Request $data)
     {
-        $data->validate(['email' => 'required|string']);
-        $details = File::getPath($data->email);
+        $data->validate(['class' => 'required|string','subject' => 'required|string','chapter' => 'required|string']);
+        $details = Book::getPath($data->class,$data->subject,$data->chapter,isset($data->branch)?$data->branch:null);
         $url = $details['url'];
-        if(!isset($url)){throw new Exception("No Image Found");
+        if(!isset($url)){throw new Exception("No Pdf Found");
         }
         $contents = file_get_contents($url);
         $filename = basename($url);
